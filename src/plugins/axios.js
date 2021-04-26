@@ -2,7 +2,9 @@ import axios from "axios";
 import NProgress from 'nprogress'
 import store from '@/store'
 import 'nprogress/nprogress.css'
+
 import {getToken} from "@/plugins/token";
+
 
 const service = axios.create({
     baseURL: 'http://localhost:8090/',
@@ -19,7 +21,8 @@ service.interceptors.request.use(
         return config
     },
     error => {
-        Promise.reject(error)
+        //把pending状态修改为拒绝返回
+        return Promise.reject(error)
     }
 )
 
@@ -30,13 +33,20 @@ service.interceptors.response.use(
         const res = response.data;
         // 200 表示操作成功
         if (res.code !== 200) {
-            // 操作不成功，根据后端状态码，判断错误类型操作
+            // 操作不成功，根据后端状态码，判断错误类型作出相应操作操作
 
-        }else {
+        } else {
             return res
         }
     },
     error => {
-
+        this.$message({
+            type: 'warning',
+            showClose: true,
+            message: '连接超时'
+        })
+        return Promise.reject('error')
     }
 )
+
+export default service
