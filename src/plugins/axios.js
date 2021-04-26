@@ -1,61 +1,42 @@
-"use strict";
-
-import Vue from 'vue';
 import axios from "axios";
+import NProgress from 'nprogress'
+import store from '@/store'
+import 'nprogress/nprogress.css'
+import {getToken} from "@/plugins/token";
 
-// Full config:  https://github.com/axios/axios#request-config
-// axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
-// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+const service = axios.create({
+    baseURL: 'http://localhost:8090/',
+    timeout: 10000,
+})
 
-let config = {
-  // baseURL: process.env.baseURL || process.env.apiUrl || ""
-  // timeout: 60 * 1000, // Timeout
-  // withCredentials: true, // Check cross-site Access-Control
-};
-
-const _axios = axios.create(config);
-
-_axios.interceptors.request.use(
-  function(config) {
-    // Do something before request is sent
-    return config;
-  },
-  function(error) {
-    // Do something with request error
-    return Promise.reject(error);
-  }
-);
-
-// Add a response interceptor
-_axios.interceptors.response.use(
-  function(response) {
-    // Do something with response data
-    return response;
-  },
-  function(error) {
-    // Do something with response error
-    return Promise.reject(error);
-  }
-);
-
-Plugin.install = function(Vue, options) {
-  Vue.axios = _axios;
-  window.axios = _axios;
-  Object.defineProperties(Vue.prototype, {
-    axios: {
-      get() {
-        return _axios;
-      }
+// service 拦截
+service.interceptors.request.use(
+    config => {
+        NProgress.start()
+        if (store.state.token) {
+            config.headers['Authorization'] = getToken()
+        }
+        return config
     },
-    $axios: {
-      get() {
-        return _axios;
-      }
+    error => {
+        Promise.reject(error)
+    }
+)
+
+// response 拦截器
+service.interceptors.response.use(
+    response => {
+
+        const res = response.data;
+        // 200 表示操作成功
+        if (res.code !== 200) {
+            // 操作不成功，根据后端状态码，判断错误类型操作
+
+        }else {
+            return res
+        }
     },
-  });
-};
+    error => {
 
-Vue.use(Plugin)
-
-export default Plugin;
+    }
+)
