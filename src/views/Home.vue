@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-
+    <h2>zhe li shi home yemian </h2>
   </div>
 </template>
 
