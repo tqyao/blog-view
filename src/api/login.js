@@ -11,3 +11,11 @@ export function login(username, password) {
         data
     })
 }
+
+export function refreshToken(accessToken, refreshToken) {
+    const url = `/members/refresh-token/${accessToken}/${refreshToken}`
+    return axios({
+        url,
+        method: 'get'
+    })
+}

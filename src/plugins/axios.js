@@ -16,7 +16,7 @@ service.interceptors.request.use(
     config => {
         NProgress.start()
         if (store.state.token) {
-            config.headers['Authorization'] = getToken()
+            config.headers['Authorization'] = getToken().accessToken
         }
         return config
     },
@@ -27,11 +27,16 @@ service.interceptors.request.use(
 )
 
 
-//刷新请求刷新token接口方法
-function refreshToken () {
-    // service是当前request.js中已创建的axios实例
-    return service.post('/refresh-token').then(res => res.data)
-}
+// //刷新请求刷新token接口方法
+// function refreshToken () {
+//     // service是当前request.js中已创建的axios实例
+//     return service.post('/refresh-token').then(res => res.data)
+// }
+
+// 是否正在刷新的标记
+let isRefreshing = false
+// 重试队列，每一项将是一个待执行的函数形式
+let requests = []
 
 // response 拦截器
 service.interceptors.response.use(
@@ -43,14 +48,15 @@ service.interceptors.response.use(
         // 200 表示操作成功
         const code = res.code
         if (code !== 200) {
-            // 操作失败，根据后端状态码，判断错误类型作出相应操作操作提示
 
+            // 操作失败，根据后端状态码，判断错误类型作出相应操作操作提示
             if (code === 400) {
-                this.$message({
-                    type: 'warning',
-                    showClose: true,
-                    message: '呀，错误请求，在尝试一次吧T~t'
-                })
+                // this.$message({
+                //     type: 'warning',
+                //     showClose: true,
+                //     message: '呀，错误请求，在尝试一次吧T~t'
+                // })
+                this.$msgWarning('呀，错误请求，在尝试一次吧T~t')
                 return Promise.reject('error')
             }
 
@@ -58,30 +64,21 @@ service.interceptors.response.use(
                 // todo：无感刷新 token
 
             }
-
             if (code === 404) {
                 //todo：跳转指定404页面
             }
 
             if (code === 500) {
-                this.$message({
-                    type: 'warning',
-                    showClose: true,
-                    message: '呀，服务器繁忙，等等再试一下吧:)'
-                })
+                this.$msgWarning('呀，服务器繁忙，等等再试一下吧:)')
                 return Promise.reject('error')
             }
 
-            if (2000 <= code < 3000) {
-                this.$message({
-                    type: 'warning',
-                    showClose: true,
-                    message: '参数有错误，再尝试一下吧！'
-                })
+            if (code >= 2000 && code < 3000) {
+                this.$msgWarning('参数有误，再确认一下哦:)')
                 return Promise.reject('error')
             }
 
-            // if (3000 <= code < 4000) {
+                // if (code >= 3000 && code < 4000) {
             //     this.$message({
             //         type: 'warning',
             //         showClose: true,
@@ -90,7 +87,7 @@ service.interceptors.response.use(
             //     return Promise.reject('error')
             // }
 
-            if (4000 <= code < 5000) {
+            if (code >= 4000 && code < 5000) {
 
             }
 
@@ -100,11 +97,7 @@ service.interceptors.response.use(
         }
     },
     error => {
-        this.$message({
-            type: 'warning',
-            showClose: true,
-            message: '连接超时'
-        })
+        this.$msgWarning('连接超时')
         return Promise.reject('error')
     }
 )

@@ -44,15 +44,19 @@ const mutations = {
 const getters = {}
 
 
+
 const actions = {
     // 登录
-    login({commit}, user) {
+    login({commit}, loginFrom) {
         return new Promise(((resolve, reject) => {
-            login(user.username, user.password).then(data => {
-                let accessToken = data.date['access_token'];
-                let refreshToken = data.date['refresh_token'];
+            login(loginFrom.username, loginFrom.password).then(data => {
+                let accessToken = data['accessToken'];
+                let refreshToken = data['refreshToken'];
+                console.log(accessToken)
+                console.log(refreshToken)
                 commit(SET_TOKEN, accessToken, refreshToken)
                 setToken(accessToken, refreshToken)
+                resolve()
             }).catch(error => {
                 reject(error)
             })

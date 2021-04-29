@@ -1,13 +1,13 @@
 export function getToken() {
-    return localStorage.token
+    return JSON.parse(localStorage.getItem("token"))
 }
 
 export function setToken(accessToken, refreshToken) {
-    localStorage.token = {
+    const token = {
         accessToken,
         refreshToken
     }
-    return localStorage.token
+    return localStorage.setItem("token", JSON.stringify(token))
 }
 
 export function removeToken() {
