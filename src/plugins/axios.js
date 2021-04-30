@@ -5,7 +5,6 @@ import 'nprogress/nprogress.css'
 
 import {getToken} from "@/plugins/token";
 
-
 const service = axios.create({
     baseURL: 'http://localhost:8082/',
     timeout: 10000,
@@ -28,15 +27,17 @@ service.interceptors.request.use(
 
 
 // //刷新请求刷新token接口方法
-// function refreshToken () {
+// function refreshToken() {
+//     const {accessToken, refreshToken} = this.$store.token
 //     // service是当前request.js中已创建的axios实例
-//     return service.post('/refresh-token').then(res => res.data)
+//     return service.get(`/members/refresh-token/${accessToken}/${refreshToken}`).then(res => res.data)
 // }
 
 // 是否正在刷新的标记
 let isRefreshing = false
 // 重试队列，每一项将是一个待执行的函数形式
 let requests = []
+
 
 // response 拦截器
 service.interceptors.response.use(
@@ -60,10 +61,6 @@ service.interceptors.response.use(
                 return Promise.reject('error')
             }
 
-            if (code === 401) {
-                // todo：无感刷新 token
-
-            }
             if (code === 404) {
                 //todo：跳转指定404页面
             }
@@ -78,19 +75,51 @@ service.interceptors.response.use(
                 return Promise.reject('error')
             }
 
-                // if (code >= 3000 && code < 4000) {
-            //     this.$message({
-            //         type: 'warning',
-            //         showClose: true,
-            //         message: '参数有错误，再尝试一下吧！'
-            //     })
-            //     return Promise.reject('error')
-            // }
-
-            if (code >= 4000 && code < 5000) {
-
+            if (code >= 4000 && code < 4004) {
+                this.$msgWarning('认证失败，重新登录试一下⑧')
+                return Promise.reject('error')
             }
 
+            if (code === 4005) {
+                // todo：无感刷新 token
+                // 保存当前失败请求配置
+                const config = response.config
+                if (!isRefreshing) {    // 还未请求刷新 token 接口
+                    isRefreshing = true
+                    console.log(store)
+                    const {accessToken, refreshToken} = store.token
+                    const param = {
+                        accessToken,
+                        refreshToken
+                    }
+                    store.dispatch('refreshToken', param).then(res => {
+                        const accessToken = res['accessToken'];
+                        service.defaults.headers['Authorization'] = accessToken
+                        config.headers['Authorization'] = accessToken
+                        config.baseURL = ''
+                        // 已经刷新了token，将所有队列中的请求进行重试
+                        requests.forEach(cb => cb(accessToken))
+                        requests = []
+                        return service(config)
+                    }).catch(res => {
+                        console.error('refreshtoken error =>', res)
+                        this.$msgWarning("登录过期，请重新登录")
+                    }).finally(() => {
+                        isRefreshing = false
+                    })
+                } else {
+                    // 正在刷新token，将返回一个未执行resolve的promise
+                    return new Promise(resolve => {
+                        // 将resolve放进队列，用一个函数形式来保存，等token刷新后直接执行
+                        requests.push((token) => {
+                            config.baseURL = ''
+                            config.headers['Authorization'] = token
+                            resolve(service(config))
+                        })
+                    })
+                }
+                return response
+            }
             return Promise.reject(res.msg)
         } else {
             return res.data

@@ -9,7 +9,6 @@ import {
     SET_USERINFO
 } from './mutation-types'
 
-import {login} from '@/api/login'
 
 const state = {
     userInfo: {
@@ -43,7 +42,7 @@ const mutations = {
 }
 const getters = {}
 
-
+import {login, refreshToken} from '@/api/login'
 
 const actions = {
     // 登录
@@ -52,13 +51,22 @@ const actions = {
             login(loginFrom.username, loginFrom.password).then(data => {
                 let accessToken = data['accessToken'];
                 let refreshToken = data['refreshToken'];
-                console.log(accessToken)
-                console.log(refreshToken)
                 commit(SET_TOKEN, accessToken, refreshToken)
                 setToken(accessToken, refreshToken)
                 resolve()
             }).catch(error => {
                 reject(error)
+            })
+        }))
+    },
+    // 刷新 token
+    refreshToken({commit}, token) {
+        return new Promise(((resolve, reject) => {
+            refreshToken(token.accessToken, token.refreshToken).then(data => {
+                let accessToken = data['accessToken'];
+                let refreshToken = data['refreshToken'];
+                commit(SET_TOKEN, accessToken, refreshToken)
+                setToken(accessToken, refreshToken)
             })
         }))
     },
