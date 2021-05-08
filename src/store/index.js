@@ -1,5 +1,5 @@
-import {createStore} from 'vuex'
-import {getToken, setToken, removeToken, getRefreshToken} from '@/plugins/token'
+import { createStore } from 'vuex'
+import { getToken, setToken, removeToken, getRefreshToken } from '@/plugins/token'
 // import Vue from 'vue'
 // Vue.use(Vuex)
 
@@ -42,11 +42,11 @@ const mutations = {
 }
 const getters = {}
 
-import {login, refreshToken} from '@/api/login'
+import { login, refreshToken } from '@/api/login'
 
 const actions = {
     // 登录
-    login({commit}, loginFrom) {
+    login({ commit }, loginFrom) {
         return new Promise(((resolve, reject) => {
             login(loginFrom.username, loginFrom.password).then(data => {
                 let accessToken = data['accessToken'];
@@ -60,18 +60,35 @@ const actions = {
         }))
     },
     // 刷新 token
-    refreshToken({commit}, token) {
+    refreshTokenAction({ commit }, token) {
         return new Promise(((resolve, reject) => {
-            refreshToken(token.accessToken, token.refreshToken).then(data => {
+            debugger
+            console.log('step into refreshTokenAction()')
+
+            // const {accessToken, refreshToken: reToken} = token
+            // refreshToken(accessToken, reToken).then(data => {
+            refreshToken(token).then(data => {
+
+                console.log(token);
+
                 let accessToken = data['accessToken'];
                 let refreshToken = data['refreshToken'];
+                console.log(accessToken, refreshToken);
                 commit(SET_TOKEN, accessToken, refreshToken)
                 setToken(accessToken, refreshToken)
+                return data
+                // resolve(data)
+            }).catch(error => {
+                console.log('==');
+                console.log(error);
             })
-        }))
+        })).catch(error => {
+            console.log('===');
+            console.log(error);
+        })
     },
 
-    getUserInfo({commit}) {
+    getUserInfo({ commit }) {
 
     }
 }

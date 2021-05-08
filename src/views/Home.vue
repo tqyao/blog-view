@@ -43,10 +43,14 @@ export default {
   components: {},
   methods: {
     testFunction() {
-      console.log(this.token.accessToken)
-      console.log()
-      refreshToken(this.token.accessToken, this.token.refreshToken).then(res => {
+      // console.log(this.token.accessToken)
+      
+      refreshToken(this.token)
+      .then(res => {
         console.log(res)
+      })
+      .catch(error => {
+        console.log(error)
       })
     },
     testRefreshToken() {

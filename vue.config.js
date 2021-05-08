@@ -9,6 +9,7 @@ module.exports = {
 				'views': '@/views',
 				'plugins': '@/plugins'
 			}
-		}
+		},
+		devtool: 'source-map'
 	}
 }
