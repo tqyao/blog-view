@@ -21,3 +21,13 @@ export function refreshToken(token) {
         method: 'get'
     })
 }
+
+export function test(param) {
+    return axios({
+        url:'/members/member/test',
+        method: 'get',
+        params: {
+            param
+        }
+    })
+}

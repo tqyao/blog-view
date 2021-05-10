@@ -21,16 +21,13 @@ const state = {
 }
 
 const mutations = {
-    [SET_TOKEN]: (state, accessToken, refreshToken) => {
-        state.token = {
-            accessToken,
-            refreshToken
-        }
-
+    [SET_TOKEN]: (state, token) => {
+        // console.log('[SET_TOKEN]:token => \n' + token);
+        state.token = token
     },
-    [SET_REFRESH_TOKEN]: (state, refreshToken) => {
-        state.refreshToken = refreshToken;
-    },
+    // [SET_REFRESH_TOKEN]: (state, refreshToken) => {
+    //     state.refreshToken = refreshToken;
+    // },
     [SET_USERINFO]: (state, username, nickname, avatar) => {
         state.userInfo = {
             username,
@@ -49,9 +46,11 @@ const actions = {
     login({ commit }, loginFrom) {
         return new Promise(((resolve, reject) => {
             login(loginFrom.username, loginFrom.password).then(data => {
-                let accessToken = data['accessToken'];
-                let refreshToken = data['refreshToken'];
-                commit(SET_TOKEN, accessToken, refreshToken)
+                const {accessToken, refreshToken} = data
+
+                console.log("login({ commit }, loginFrom) => \n" + accessToken + "\n" + refreshToken);
+
+                commit(SET_TOKEN, {accessToken, refreshToken})
                 setToken(accessToken, refreshToken)
                 resolve()
             }).catch(error => {
@@ -62,7 +61,6 @@ const actions = {
     // 刷新 token
     refreshTokenAction({ commit }, token) {
         return new Promise(((resolve, reject) => {
-            debugger
             console.log('step into refreshTokenAction()')
 
             // const {accessToken, refreshToken: reToken} = token

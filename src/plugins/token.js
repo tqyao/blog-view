@@ -3,6 +3,7 @@ export function getToken() {
 }
 
 export function setToken(accessToken, refreshToken) {
+    // console.log("setToken:refreshToken =>" + refreshToken);
     const token = {
         accessToken,
         refreshToken

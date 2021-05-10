@@ -6,6 +6,12 @@ import 'nprogress/nprogress.css'
 import { getToken, setToken } from "@/plugins/token";
 import { ElMessage } from 'element-plus'
 
+import {
+    SET_TOKEN,
+    SET_REFRESH_TOKEN,
+    SET_USERINFO
+} from '@/store/mutation-types'
+
 const service = axios.create({
     baseURL: 'http://localhost:8082/',
     timeout: 10000,
@@ -30,11 +36,14 @@ service.interceptors.request.use(
 
 //刷新请求刷新token接口方法
 function refreshToken() {
+
     const { accessToken, refreshToken } = store.state.token
-    console.log('刷新请求刷新token接口方法 =>');
-    console.log(accessToken, refreshToken);
+
+    // console.log("function refreshToken() :accessToken:refreshToken" + accessToken + "\n" + refreshToken)
+    // console.log('刷新请求刷新token接口方法 =>\n' + accessToken + "\n" + refreshToken);
+
     // service是当前request.js中已创建的axios实例
-    return service.get(`/members/refresh-token/${accessToken}/${refreshToken}`).then(res => res.data)
+    return service.get(`/members/refresh-token/${accessToken}/${refreshToken}`).then(res => res)
 }
 
 // 是否正在刷新的标记
@@ -50,20 +59,15 @@ service.interceptors.response.use(
         NProgress.done()
 
         const res = response.data;
+
         // 200 表示操作成功
         const code = res.code
 
-        // debugger
+
         if (code !== 200) {
 
             // 操作失败，根据后端状态码，判断错误类型作出相应操作操作提示
             if (code === 400) {
-                // this.$message({
-                //     type: 'warning',
-                //     showClose: true,
-                //     message: '呀，错误请求，在尝试一次吧T~t'
-                // })
-                // this.$msgWarning('呀，错误请求，在尝试一次吧T~t')
                 ElMessage({
                     message: '呀，错误请求，在尝试一次吧T~t',
                     type: 'warning',
@@ -97,7 +101,7 @@ service.interceptors.response.use(
 
             if (code >= 4000 && code < 4004) {
                 ElMessage({
-                    message: '认证失败，重新登录试一下⑧',
+                    message: '认证失败，重新登录试一下ba:D',
                     type: 'warning',
                     showClose: true
                 })
@@ -106,24 +110,28 @@ service.interceptors.response.use(
 
             // debugger
             if (code === 4005) {
+
                 // todo：无感刷新 token
                 // 保存当前失败请求配置
                 const config = response.config
                 if (!isRefreshing) {    // 还未请求过刷新 token 接口
+
                     isRefreshing = true
-                    var token = store.state.token
+                    // var token = store.state.token
                     // store.dispatch('refreshTokenAction', token).then(res => {
                     refreshToken().then(res => {
-                        // const accessToken = res['accessToken'];
-                        // const reToken = res['refreshToken'];
+
+                        debugger
+
                         const { accessToken, refreshToken } = res
 
-                        console.log('响应拦截器中 =>');
-                        console.log(accessToken, refreshToken);
+                        // console.log('响应拦截器中 =>');
+                        // console.log(accessToken, refreshToken);
 
                         service.defaults.headers['Authorization'] = accessToken
                         config.headers['Authorization'] = accessToken
                         setToken(accessToken, refreshToken)
+                        store.commit(SET_TOKEN, {accessToken, refreshToken})
 
                         // url已经带上了/api，避免出现/api/api的情况
                         config.baseURL = ''
@@ -135,9 +143,11 @@ service.interceptors.response.use(
                         return service(config)
                     }).catch(res => {
                         //刷新token失败，神仙也救不了了，跳转到首页重新登录吧
-                        console.error('refreshtoken error =>', res)
+
+                        console.log('refreshtoken error =>', res)
+
                         ElMessage({
-                            message: '登录过期，请重新登录',
+                            message: '登录过期，请重新登录;P',
                             type: 'warning',
                             showClose: true
                         })
