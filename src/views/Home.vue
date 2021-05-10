@@ -40,7 +40,6 @@ export default {
       test("hello world!").then(data => {
         console.log("mytestFunction():test() => \n ")
         console.log(data)
-
       }).catch(error => {
         console.log(error)
       })

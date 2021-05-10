@@ -3,8 +3,8 @@ import NProgress from 'nprogress'
 import store from '@/store'
 import 'nprogress/nprogress.css'
 
-import { getToken, setToken } from "@/plugins/token";
-import { ElMessage } from 'element-plus'
+import {getToken, setToken} from "@/plugins/token";
+import {ElMessage} from 'element-plus'
 
 import {
     SET_TOKEN,
@@ -33,17 +33,16 @@ service.interceptors.request.use(
 )
 
 
-
 //刷新请求刷新token接口方法
 function refreshToken() {
 
-    const { accessToken, refreshToken } = store.state.token
+    const {accessToken, refreshToken} = store.state.token
 
     // console.log("function refreshToken() :accessToken:refreshToken" + accessToken + "\n" + refreshToken)
     // console.log('刷新请求刷新token接口方法 =>\n' + accessToken + "\n" + refreshToken);
 
     // service是当前request.js中已创建的axios实例
-    return service.get(`/members/refresh-token/${accessToken}/${refreshToken}`).then(res => res)
+    return service.get(`/members/refresh-token/${accessToken}/${refreshToken}`)
 }
 
 // 是否正在刷新的标记
@@ -121,9 +120,9 @@ service.interceptors.response.use(
                     // store.dispatch('refreshTokenAction', token).then(res => {
                     refreshToken().then(res => {
 
-                        debugger
+                        // debugger
 
-                        const { accessToken, refreshToken } = res
+                        const {accessToken, refreshToken} = res
 
                         // console.log('响应拦截器中 =>');
                         // console.log(accessToken, refreshToken);
@@ -166,9 +165,9 @@ service.interceptors.response.use(
                         })
                     })
                 }
-                return response
+                // return response
             }
-            return Promise.reject(res.msg)
+            // return Promise.reject(res.msg)
         } else {
             return res.data
         }
