@@ -58,37 +58,37 @@ const actions = {
             })
         }))
     },
-    // 刷新 token
-    refreshTokenAction({ commit }, token) {
-        return new Promise(((resolve, reject) => {
-            console.log('step into refreshTokenAction()')
-
-            // const {accessToken, refreshToken: reToken} = token
-            // refreshToken(accessToken, reToken).then(data => {
-            refreshToken(token).then(data => {
-
-                console.log(token);
-
-                let accessToken = data['accessToken'];
-                let refreshToken = data['refreshToken'];
-                console.log(accessToken, refreshToken);
-                commit(SET_TOKEN, accessToken, refreshToken)
-                setToken(accessToken, refreshToken)
-                return data
-                // resolve(data)
-            }).catch(error => {
-                console.log('==');
-                console.log(error);
-            })
-        })).catch(error => {
-            console.log('===');
-            console.log(error);
-        })
-    },
-
-    getUserInfo({ commit }) {
-
-    }
+    // // 刷新 token
+    // refreshTokenAction({ commit }, token) {
+    //     return new Promise(((resolve, reject) => {
+    //         console.log('step into refreshTokenAction()')
+    //
+    //         // const {accessToken, refreshToken: reToken} = token
+    //         // refreshToken(accessToken, reToken).then(data => {
+    //         refreshToken(token).then(data => {
+    //
+    //             console.log(token);
+    //
+    //             let accessToken = data['accessToken'];
+    //             let refreshToken = data['refreshToken'];
+    //             console.log(accessToken, refreshToken);
+    //             commit(SET_TOKEN, accessToken, refreshToken)
+    //             setToken(accessToken, refreshToken)
+    //             return data
+    //             // resolve(data)
+    //         }).catch(error => {
+    //             console.log('==');
+    //             console.log(error);
+    //         })
+    //     })).catch(error => {
+    //         console.log('===');
+    //         console.log(error);
+    //     })
+    // },
+    //
+    // getUserInfo({ commit }) {
+    //
+    // }
 }
 const modules = {}
 export default createStore({

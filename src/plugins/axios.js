@@ -108,18 +108,23 @@ service.interceptors.response.use(
             }
 
             // debugger
+            // todo：无感刷新 token
             if (code === 4005) {
-
-                // todo：无感刷新 token
+                // 返回一个未执行的 Promise
+                // return new Promise((resolve, reject) => {
                 // 保存当前失败请求配置
                 const config = response.config
                 if (!isRefreshing) {    // 还未请求过刷新 token 接口
-
                     isRefreshing = true
+
                     // var token = store.state.token
                     // store.dispatch('refreshTokenAction', token).then(res => {
-                    refreshToken().then(res => {
 
+                    const {accessToken, refreshToken} = store.state.token
+                    return service({
+                        url: `/members/refresh-token/${accessToken}/${refreshToken}`,
+                        method: 'get'
+                    }).then((res) => {
                         // debugger
 
                         const {accessToken, refreshToken} = res
@@ -154,6 +159,43 @@ service.interceptors.response.use(
                     }).finally(() => {
                         isRefreshing = false
                     })
+
+                    // return refreshToken().then(res => {
+                    //
+                    //     // debugger
+                    //     //
+                    //     const {accessToken, refreshToken} = res
+                    //
+                    //     // console.log('响应拦截器中 =>');
+                    //     // console.log(accessToken, refreshToken);
+                    //
+                    //     service.defaults.headers['Authorization'] = accessToken
+                    //     config.headers['Authorization'] = accessToken
+                    //     setToken(accessToken, refreshToken)
+                    //     store.commit(SET_TOKEN, {accessToken, refreshToken})
+                    //
+                    //     // url已经带上了/api，避免出现/api/api的情况
+                    //     config.baseURL = ''
+                    //     // 已经刷新了token，将所有队列中的请求进行重试
+                    //     requests.forEach(cb => cb(accessToken))
+                    //     // 重试完了别忘了清空这个队列
+                    //     requests = []
+                    //     // 重试当前请求并返回promise
+                    //     return service(config)
+                    // }).catch(res => {
+                    //     //刷新token失败，神仙也救不了了，跳转到首页重新登录吧
+                    //
+                    //     console.log('refreshtoken error =>', res)
+                    //
+                    //     ElMessage({
+                    //         message: '登录过期，请重新登录;P',
+                    //         type: 'warning',
+                    //         showClose: true
+                    //     })
+                    //     return Promise.reject('error')
+                    // }).finally(() => {
+                    //     isRefreshing = false
+                    // })
                 } else {
                     // 正在刷新token，将返回一个未执行resolve的promise
                     return new Promise(resolve => {
@@ -166,8 +208,14 @@ service.interceptors.response.use(
                     })
                 }
                 // return response
+                // })
+
+
             }
             // return Promise.reject(res.msg)
+            // return new Promise(resolve => {
+            //     return
+            // })
         } else {
             return res.data
         }

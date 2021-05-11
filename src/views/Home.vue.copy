@@ -37,9 +37,13 @@ export default {
         });
     },
     mytestFunction(){
+      console.log("====")
       test("hello world!").then(data => {
+        // debugger
+        console.log("====")
         console.log("mytestFunction():test() => \n ")
         console.log(data)
+        console.log("===")
       }).catch(error => {
         console.log(error)
       })
