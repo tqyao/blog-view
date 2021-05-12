@@ -1,7 +1,10 @@
 <template>
   <div class="login_container">
     <div class="login_box">
-      <h3>欢迎来到Nikuo博客园</h3>
+<!--      <el-menu :router="true" :default-active="activeIndex" class="el-menu-demo" mode="horizontal">-->
+<!--        <el-menu-item index="/login">登录</el-menu-item>-->
+<!--        <el-menu-item index="/register">注册</el-menu-item>-->
+<!--      </el-menu>-->
       <!--登录表单-->
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" class="login_form">
         <el-form-item prop="username">
@@ -14,6 +17,7 @@
         <el-form-item class="btns">
           <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
+
         </el-form-item>
       </el-form>
     </div>
@@ -21,6 +25,7 @@
 </template>
 
 <script>
+
 export default {
   name: "Login",
   data() {
@@ -62,10 +67,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .login_container {
   height: 100%;
-  /*background-image: url('../../public/image/background.jpg');*/
+  background-image: url('../../public/image/background.jpg');
 }
 
 .login_box {
@@ -82,6 +87,9 @@ export default {
   border-radius: 10px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
+  & h3 {
+    text-align: center;
+  }
 }
 
 .login_box img {

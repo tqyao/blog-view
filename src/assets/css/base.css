@@ -315,3 +315,19 @@ footer {
         background-position: -400% 0;
     }
 }
+
+/*a {*/
+/*    text-decoration:none;*/
+/*    background-color: transparent; !* 1 *!*/
+/*    -webkit-text-decoration-skip: objects; !* 2 *!*/
+/*}*/
+
+/*!***/
+/* * Remove the outline on focused links when they are also active or hovered*/
+/* * in all browsers (opinionated).*/
+/* *!*/
+
+/*a:active,*/
+/*a:hover {*/
+/*    outline-width: 0;*/
+/*}*/
