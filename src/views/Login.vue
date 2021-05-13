@@ -1,10 +1,10 @@
 <template>
   <div class="login_container">
     <div class="login_box">
-<!--      <el-menu :router="true" :default-active="activeIndex" class="el-menu-demo" mode="horizontal">-->
-<!--        <el-menu-item index="/login">登录</el-menu-item>-->
-<!--        <el-menu-item index="/register">注册</el-menu-item>-->
-<!--      </el-menu>-->
+      <el-menu :router="true" class="el-menu-demo login_header" mode="horizontal">
+        <el-menu-item index="/login">登录</el-menu-item>
+        <el-menu-item index="/register">注册</el-menu-item>
+      </el-menu>
       <!--登录表单-->
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" class="login_form">
         <el-form-item prop="username">
@@ -73,6 +73,20 @@ export default {
   background-image: url('../../public/image/background.jpg');
 }
 
+.login_header {
+  display: flex;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  border-bottom: solid 0;
+
+  .el-menu-item:first-of-type {
+    border-bottom-color: #409EFF !important;
+    border-bottom: 2px solid;
+  }
+}
+
+
 .login_box {
   width: 450px;
   height: 300px;
@@ -87,6 +101,7 @@ export default {
   border-radius: 10px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
+
   & h3 {
     text-align: center;
   }
@@ -110,6 +125,5 @@ export default {
 .btns {
   display: flex;
   justify-content: center;
-
 }
 </style>
